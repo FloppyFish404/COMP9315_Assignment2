@@ -156,7 +156,7 @@ void closeRelation(Reln r)
 
 // MY CODE
 int splitThreshold(Reln r) {
-    return 1024 / (10 * nattrs(r));
+    return 1024 / (1 * nattrs(r));
 }
 
 void insertIntoBucket(Reln r, Tuple *arr, int n, PageID pid) {
@@ -174,7 +174,7 @@ void insertIntoBucket(Reln r, Tuple *arr, int n, PageID pid) {
 
             if (next == NO_PAGE) {
                 // create new overflow page
-                PageID newov = addPage(r->ovflow);
+                PageID newov = allocOvflowPage(r);
                 pageSetOvflow(pg, newov);
 
                 // write current page before moving on
@@ -382,9 +382,9 @@ PageID addToRelation(Reln r, Tuple t)
 		free(pg);
 		while (ovp != NO_PAGE) {
             // DEBUG
-            static int guard = 0;
+            int guard = 0;
             guard++;
-            if (guard > 1000) {
+            if (guard > 100) {
                 fprintf(stderr, "🔥 LOOP DETECTED in overflow scan at ov%d\n", ovp);
                 exit(1);
             }
